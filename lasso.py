@@ -35,30 +35,17 @@ df['CommonCold'].value_counts() # นับข้อมูลของ column �
 from sklearn.feature_selection import chi2
 
 # Prepare features and target variable
-X = df[['Head','Neck']]
+X = df[['Head','Nose','Neck','Fever']]
 y = df['CommonCold']
 
 from sklearn.model_selection import train_test_split
-from sklearn import svm
+from sklearn.linear_model import Lasso
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
-modelSVM = svm.SVC(kernel='linear')
-modelSVM.fit(X_train, y_train)
-
-
-y_pred = modelSVM.predict(X_test)
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-print(confusion_matrix(y_test, y_pred))
-print(classification_report(y_test, y_pred))
-print(accuracy_score(y_test, y_pred))
-
-
-
-
-
-
-
-
-
-
+best_features = Lasso(alpha=0.01)
+best_features.fit(X_train, y_train)
+feature_coefficients = pd.Series(best_features.coef_, index=X.columns)
+selected_features = feature_coefficients[feature_coefficients != 0].index
+print(f"Number of selected features: {len(selected_features)}")
+print(f"Selected features : {list(selected_features)}")

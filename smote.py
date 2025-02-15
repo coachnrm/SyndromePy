@@ -35,30 +35,30 @@ df['CommonCold'].value_counts() # นับข้อมูลของ column �
 from sklearn.feature_selection import chi2
 
 # Prepare features and target variable
-X = df[['Head','Neck']]
+X = df[['Head','Nose','Neck','Fever']]
 y = df['CommonCold']
 
+
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
-from sklearn import svm
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
 
-modelSVM = svm.SVC(kernel='linear')
-modelSVM.fit(X_train, y_train)
+from imblearn.over_sampling import SMOTE
+sm = SMOTE(random_state=42)
+X_new,y_new = sm.fit_resample(X_train, y_train)
+# print จำนวน sample size หลังจากปรับกลุ่มตัวอย่างด้วย SMOTE
 
+# print(f"Shape of X before SMOTE: {X_train.shape} Shape of X after SMOTE: {X_new.shape}")
+# print('\nBalance of Common cold and normal (%):')
+# print(y_new.value_counts(normalize=True)*100)
 
-y_pred = modelSVM.predict(X_test)
+modelDTree = DecisionTreeClassifier(random_state=100)
+
+modelDTree.fit(X_new,y_new)
+y_pred = modelDTree.predict(X_test)
+
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 print(confusion_matrix(y_test, y_pred))
 print(classification_report(y_test, y_pred))
 print(accuracy_score(y_test, y_pred))
-
-
-
-
-
-
-
-
-
-
