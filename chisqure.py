@@ -38,20 +38,26 @@ from sklearn.feature_selection import chi2
 X = df[['Head','Nose','Neck','Fever']]
 y = df['CommonCold']
 
+# Compute chi-square scores
+chi_scores = chi2(X, y)
+p_values = pd.Series(chi_scores[1], index=X.columns)
+p_values.sort_values(ascending=True, inplace=True)
 
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
+# Display results in a new Matplotlib window
+plt.figure(figsize=(8, 4))  # Set figure size
+plt.axis("off")  # Hide axes
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+# Create a table with sorted p-values
+table = plt.table(cellText=p_values.reset_index().values,
+                  colLabels=["Feature", "P-Value"],
+                  cellLoc="center",
+                  loc="center")
 
-modelDTree = DecisionTreeClassifier(random_state=100)
+table.auto_set_font_size(False)
+table.set_fontsize(10)
+table.scale(1.2, 1.2)  # Adjust table size
 
-modelDTree.fit(X,y)
-y_pred = modelDTree.predict(X_test)
+plt.title("Chi-Square Test P-Values")
 
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-print(confusion_matrix(y_test, y_pred))
-print(classification_report(y_test, y_pred))
-print(accuracy_score(y_test, y_pred))
-
-
+# Show the table in a new window
+plt.show()

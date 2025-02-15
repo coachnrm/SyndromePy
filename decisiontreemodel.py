@@ -38,7 +38,6 @@ from sklearn.feature_selection import chi2
 X = df[['Head','Nose','Neck','Fever']]
 y = df['CommonCold']
 
-
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 
@@ -53,5 +52,4 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 print(confusion_matrix(y_test, y_pred))
 print(classification_report(y_test, y_pred))
 print(accuracy_score(y_test, y_pred))
-
 
